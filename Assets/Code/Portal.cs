@@ -20,11 +20,11 @@ public class Portal : MonoBehaviour
         Vector3 localDirection = mirrorPortal.mirrorPortalTransform.InverseTransformDirection(player.camera.transform.forward);
         portalCamera.transform.forward = transform.TransformDirection(localDirection);
         */
-        float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
+     /*   float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
         portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
-
+     */
     }
-
+    /*
     public bool IsValidPosition(Vector3 position, Vector3 normal)
     {
         transform.position = position;
@@ -60,4 +60,6 @@ public class Portal : MonoBehaviour
 
         return true;
     }
+
+    */
 }
