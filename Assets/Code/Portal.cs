@@ -18,12 +18,18 @@ public class Portal : MonoBehaviour
     public float maxDistanceToValidPoint = 1.2f;
     public float minDot = 0.9f;
 
+
+
+    private Collider collider;
+
     private void Start()
     {
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<FPS_CharacterController>();
         }
+
+        collider = GetComponent<Collider>();
 
         gameObject.SetActive(false);
     }
@@ -95,5 +101,39 @@ public class Portal : MonoBehaviour
 
 
         return true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Teleport();
+        }
+    }
+
+    private void Teleport()
+    {
+        player.characterController.enabled = false;
+
+        Vector3 localPosition = transform.InverseTransformPoint(transform.position);
+        player.transform.position = mirrorPortal.transform.TransformPoint(localPosition);
+
+        player.characterController.enabled = true;
+
+        Vector3 localDirection = transform.InverseTransformDirection(transform.forward);
+        player.transform.forward = mirrorPortal.transform.TransformDirection(localDirection);
+        player.yaw = player.transform.rotation.eulerAngles.y;
+        player.pitch = player.pitchController.rotation.eulerAngles.x;
+
+        StartCoroutine(DisableTeleport());
+    }
+
+    IEnumerator DisableTeleport()
+    {
+        collider.enabled = false;
+
+        yield return new WaitForSeconds(1f);
+        
+        collider.enabled = true;
     }
 }

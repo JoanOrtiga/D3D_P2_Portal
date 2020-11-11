@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class FPS_CharacterController : RestartableObject
 {
-    private float yaw;
-    private float pitch;
+    [HideInInspector] public float yaw;
+    [HideInInspector] public float pitch;
 
     [Header("MOVEMENT OPTIONS")]
     public float min_Pitch = -35f;
@@ -16,7 +16,7 @@ public class FPS_CharacterController : RestartableObject
     public float pitchRotationSpeed = 1f;
 
     public Transform pitchController;
-    private CharacterController characterController;
+    [HideInInspector] public CharacterController characterController;
 
     public float movementSpeed = 10f;
     public float movementSpeedSprinting = 14f;
