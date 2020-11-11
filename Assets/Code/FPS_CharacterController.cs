@@ -36,15 +36,28 @@ public class FPS_CharacterController : RestartableObject
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
 
+    [Header("PORTALS")]
+    public Portal bluePortal;
+    public Portal orangePortal;
+
+    public LayerMask shootLayerMask;
+    public float shootDistance;
+
+    [Header("References")]
+    public Camera mainCamera;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+
+        mainCamera = Camera.main;
     }
 
     protected override void Start()
     {
         base.Start();
+
+        Cursor.lockState = CursorLockMode.Locked;
 
         yaw = transform.rotation.eulerAngles.y;
         pitch = pitchController.localRotation.eulerAngles.x;
@@ -94,6 +107,15 @@ public class FPS_CharacterController : RestartableObject
         collisionFlags = characterController.Move(l_Movement);
 
         GravityUpdate();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            ShootPortal(bluePortal);
+        }
+        else if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            ShootPortal(orangePortal);
+        }
     }
 
     private void CameraUpdate()
@@ -116,6 +138,24 @@ public class FPS_CharacterController : RestartableObject
         if (onGround || ((collisionFlags & CollisionFlags.CollidedAbove) != 0 && verticalSpeed > 0.0f))
         {
             verticalSpeed = 0.0f;
+        }
+    }
+
+
+    private void ShootPortal(Portal whatPortal)
+    {
+        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+        RaycastHit rayCastHit;
+
+        if (Physics.Raycast(ray, out rayCastHit, shootDistance, shootLayerMask.value))
+        {
+
+            whatPortal.gameObject.SetActive(true);
+            bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
+
+            print(validPos);
+            if (!validPos)
+                whatPortal.gameObject.SetActive(false);
         }
     }
 }
