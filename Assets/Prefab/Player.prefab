@@ -270,13 +270,13 @@ MonoBehaviour:
   backMovement: 115
   jumpKey: 32
   sprintKey: 304
-  maxHeal: 100
-  maxShield: 100
-  recieveDamageHealPercentatge: 25
-  recieveDamageShieldPercentatge: 75
-  currentPoints: 0
-  updateUI: {fileID: 0}
-  gunReference: {fileID: 0}
+  bluePortal: {fileID: 0}
+  orangePortal: {fileID: 0}
+  shootLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  shootDistance: 10
+  mainCamera: {fileID: 0}
 --- !u!143 &3480997875836538364
 CharacterController:
   m_ObjectHideFlags: 0
