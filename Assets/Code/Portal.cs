@@ -18,9 +18,9 @@ public class Portal : MonoBehaviour
     public float maxDistanceToValidPoint = 1.2f;
     public float minDot = 0.9f;
 
+    [HideInInspector] public bool enteredPortal = false;
+    [HideInInspector] public bool leftPortal = false;
 
-
-    private Collider collider;
 
     private void Start()
     {
@@ -29,30 +29,11 @@ public class Portal : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<FPS_CharacterController>();
         }
 
-        collider = GetComponent<Collider>();
-
         gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        /*Vector3 localPosition = mirrorPortalTransform.InverseTransformPoint(player.mainCamera.transform.position);
-        portalCamera.transform.position = transform.TransformPoint(localPosition);
-        Vector3 localDirection = mirrorPortal.mirrorPortalTransform.InverseTransformDirection(player.mainCamera.transform.forward);
-        portalCamera.transform.forward = transform.TransformDirection(localDirection);
-        
-        float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
-        portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
-        */
-
-        /*  Vector3 localPosition = mirrorPortal.mirrorPortalTransform.InverseTransformPoint(player.mainCamera.transform.position);
-          portalCamera.transform.localPosition = transform.TransformPoint(localPosition);
-          Vector3 localDirection = mirrorPortal.mirrorPortalTransform.InverseTransformDirection(player.mainCamera.transform.forward);
-          portalCamera.transform.forward = transform.TransformDirection(localDirection);
-
-          float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
-          portalCamera.nearClipPlane = distanceToPortal + cameraOffset;*/
-
         Vector3 localPosition = mirrorPortal.mirrorPortalTransform.InverseTransformPoint(player.mainCamera.transform.position);
         portalCamera.transform.position = transform.TransformPoint(localPosition);
         Vector3 localDirection = mirrorPortal.mirrorPortalTransform.InverseTransformDirection(player.mainCamera.transform.forward);
@@ -60,6 +41,11 @@ public class Portal : MonoBehaviour
 
         float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
         portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
+
+        if (enteredPortal && !leftPortal)
+        {
+            Teleport();
+        }
     }
 
 
@@ -105,19 +91,32 @@ public class Portal : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !enteredPortal && !leftPortal)
         {
-            Teleport();
+            if (mirrorPortal.gameObject.activeSelf)
+            {
+                enteredPortal = true;
+                mirrorPortal.enteredPortal = false;
+                mirrorPortal.leftPortal = true;
+                leftPortal = false;
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && !enteredPortal)
+        {
+            enteredPortal = false;
+            leftPortal = false;
         }
     }
 
     private void Teleport()
     {
         player.characterController.enabled = false;
-
-        Vector3 localPosition = transform.InverseTransformPoint(transform.position);
-        player.transform.position = mirrorPortal.transform.TransformPoint(localPosition);
-
+        Vector3 localPosition = transform.InverseTransformPoint(transform.position);       //Offset to adjust player height;
+        player.transform.position = mirrorPortal.transform.TransformPoint(localPosition) - new Vector3(0, 1f, 0); 
         player.characterController.enabled = true;
 
         Vector3 localDirection = transform.InverseTransformDirection(transform.forward);
@@ -125,15 +124,6 @@ public class Portal : MonoBehaviour
         player.yaw = player.transform.rotation.eulerAngles.y;
         player.pitch = player.pitchController.rotation.eulerAngles.x;
 
-        StartCoroutine(DisableTeleport());
-    }
-
-    IEnumerator DisableTeleport()
-    {
-        collider.enabled = false;
-
-        yield return new WaitForSeconds(1f);
-        
-        collider.enabled = true;
+        enteredPortal = false;
     }
 }

@@ -36,12 +36,28 @@ public class FPS_CharacterController : RestartableObject
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
 
+    public KeyCode getObjectKey = KeyCode.F;
+
+    private Transform attachObjectTransform;
+
+    public float maxDistanceToAttachObject = 25f;
+    public LayerMask attachLayerMask;
+
+    private float attachingObjectCurrentTime = 0.0f;
+    private float attachObjectTime = 0.0f;
+    private bool attachingObject;
+    private bool attachedObject;
+    private GameObject objectAttached;
+
+    public float throwAttachObjectForce = 5f;
+
     [Header("PORTALS")]
     public Portal bluePortal;
     public Portal orangePortal;
 
     public LayerMask shootLayerMask;
     public float shootDistance;
+
 
     [Header("References")]
     public Camera mainCamera;
@@ -108,15 +124,27 @@ public class FPS_CharacterController : RestartableObject
 
         GravityUpdate();
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !attachedObject && !attachingObject)
         {
             ShootPortal(bluePortal);
         }
-        else if (Input.GetKeyDown(KeyCode.Mouse1))
+        else if (Input.GetKeyDown(KeyCode.Mouse1) && !attachedObject && !attachingObject)
         {
             ShootPortal(orangePortal);
         }
+
+        if (Input.GetKeyDown(getObjectKey) && attachedObject == null)
+        {
+            GetObject();
+        }
+
+        if (attachedObject != null)
+        {
+            UpdateAttachedObject();
+        }
     }
+
+
 
     private void CameraUpdate()
     {
@@ -141,7 +169,6 @@ public class FPS_CharacterController : RestartableObject
         }
     }
 
-
     private void ShootPortal(Portal whatPortal)
     {
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
@@ -149,14 +176,78 @@ public class FPS_CharacterController : RestartableObject
 
         if (Physics.Raycast(ray, out rayCastHit, shootDistance, shootLayerMask.value))
         {
-
             whatPortal.gameObject.SetActive(true);
             bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
 
-            print(validPos);
             if (!validPos)
                 whatPortal.gameObject.SetActive(false);
         }
+    }
+
+    private void GetObject()
+    {
+        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+
+        RaycastHit raycastHit;
+
+        if (Physics.Raycast(ray, out raycastHit, maxDistanceToAttachObject, attachLayerMask))
+        {
+            if (raycastHit.collider.tag == "Companion")
+            {
+                AttachObject(raycastHit.collider);
+            }
+        }
+    }
+
+    private void AttachObject(Collider collider)
+    {
+        attachingObject = true;
+        attachedObject = collider.gameObject;
+        collider.enabled = false;
+        collider.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    private void UpdateAttachedObject()
+    {
+        attachingObjectCurrentTime += Time.deltaTime;
+
+        if (attachingObject)
+        {
+            float pct = Mathf.Min(attachingObjectCurrentTime / attachObjectTime, 1f);
+
+            objectAttached.transform.position = Vector3.Lerp(objectAttached.transform.position, attachObjectTransform.position, pct);
+            objectAttached.transform.rotation = Quaternion.Lerp(objectAttached.transform.rotation, attachObjectTransform.rotation, pct);
+
+
+            if (pct == 1.0f)
+            {
+                attachingObject = false;
+                attachedObject = true;
+            }
+        }
+        else if (attachedObject)
+        {
+            if (Input.GetKeyDown(getObjectKey))
+            {
+                ThrowAttachObject(0.0f);
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                ThrowAttachObject(throwAttachObjectForce);
+            }
+        }
+    }
+
+    private void ThrowAttachObject(float force)
+    {
+        objectAttached.GetComponent<Collider>().enabled = false;
+        Rigidbody rigidbody = objectAttached.GetComponent<Rigidbody>();
+        rigidbody.isKinematic = false;
+        rigidbody.AddForce(attachObjectTransform.up * force);
+
+        attachedObject = false;
+        objectAttached = null;
+        attachingObjectCurrentTime = 0.0f;
     }
 }
 
