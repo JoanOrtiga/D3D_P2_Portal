@@ -11,7 +11,7 @@ public class killer : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            //fps.LoseHeal(damage);
+           fps.LoseHeal(damage);
         }
     }
 }

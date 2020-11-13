@@ -50,6 +50,8 @@ public class FPS_CharacterController : RestartableObject
     private GameObject objectAttached;
 
     public float throwAttachObjectForce = 5f;
+    public int maxHp;
+    private int currentHp;
 
     [Header("PORTALS")]
     public Portal bluePortal;
@@ -71,6 +73,7 @@ public class FPS_CharacterController : RestartableObject
 
     protected override void Start()
     {
+        currentHp = maxHp;
         base.Start();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -198,7 +201,11 @@ public class FPS_CharacterController : RestartableObject
             }
         }
     }
-
+    public void LoseHeal(int incomingDamage)
+    {
+        currentHp -= incomingDamage;
+       
+    }
     private void AttachObject(Collider collider)
     {
         attachingObject = true;
