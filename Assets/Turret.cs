@@ -36,7 +36,6 @@ public class Turret : MonoBehaviour
                 laser.SetPosition(1, fwd * rayLength + shootingPoint.transform.position);
                 if (Physics.Raycast(ray, out rayCastHit, rayLength))
                 {
-                    print(rayCastHit.collider.gameObject.tag.ToString());
 
                     if (rayCastHit.collider.gameObject.name.Equals("Capsule"))
                     {
