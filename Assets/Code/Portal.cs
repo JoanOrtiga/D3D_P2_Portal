@@ -21,6 +21,8 @@ public class Portal : MonoBehaviour
     [HideInInspector] public bool enteredPortal = false;
     [HideInInspector] public bool leftPortal = false;
 
+    private GameObject objectTeleported;
+    private bool teleportObjectAvaiable = true;
 
     private void Start()
     {
@@ -44,7 +46,7 @@ public class Portal : MonoBehaviour
 
         if (enteredPortal && !leftPortal)
         {
-            Teleport();
+            TeleportPlayer();
         }
     }
 
@@ -112,7 +114,7 @@ public class Portal : MonoBehaviour
         }
     }
 
-    private void Teleport()
+    private void TeleportPlayer()
     {
         player.characterController.enabled = false;
         Vector3 localPosition = transform.InverseTransformPoint(transform.position);       //Offset to adjust player height;
