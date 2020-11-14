@@ -116,16 +116,22 @@ public class Portal : MonoBehaviour
 
     private void TeleportPlayer()
     {
+        float pitch = player.pitchController.rotation.eulerAngles.x;
+
         player.characterController.enabled = false;
         Vector3 localPosition = transform.InverseTransformPoint(transform.position);       //Offset to adjust player height;
         player.transform.position = mirrorPortal.transform.TransformPoint(localPosition) - new Vector3(0, 1f, 0); 
         player.characterController.enabled = true;
 
-        Vector3 localDirection = transform.InverseTransformDirection(transform.forward);
+        
+
+        Vector3 localDirection = transform.InverseTransformDirection(-player.transform.forward);
         player.transform.forward = mirrorPortal.transform.TransformDirection(localDirection);
         player.yaw = player.transform.rotation.eulerAngles.y;
-        player.pitch = player.pitchController.rotation.eulerAngles.x;
+        player.pitch = pitch;
 
         enteredPortal = false;
+
+       // Debug.Break();
     }
 }
