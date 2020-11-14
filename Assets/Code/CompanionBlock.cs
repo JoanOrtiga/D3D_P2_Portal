@@ -19,6 +19,14 @@ public class CompanionBlock : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Destroy"))
+        {
+            Destroy(gameObject, 0.25f);
+        }
+    }
+
     private void Teleport(Portal portal)
     {
         Vector3 localVelocity = portal.mirrorPortalTransform.InverseTransformDirection(rigidbody.velocity);

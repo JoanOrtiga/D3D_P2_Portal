@@ -63,6 +63,8 @@ public class FPS_CharacterController : RestartableObject
 
     [Header("References")]
     public Camera mainCamera;
+    public UIPlayer uiPlayer;
+    public GameManager gameManager;
 
     private void Awake()
     {
@@ -129,11 +131,11 @@ public class FPS_CharacterController : RestartableObject
 
         if (Input.GetKeyDown(KeyCode.Mouse0) && !attachedObject && !attachingObject)
         {
-            ShootPortal(bluePortal);
+            ShootPortal(bluePortal, 0);
         }
         else if (Input.GetKeyDown(KeyCode.Mouse1) && !attachedObject && !attachingObject)
         {
-            ShootPortal(orangePortal);
+            ShootPortal(orangePortal, 1);
         }
 
         if (Input.GetKeyDown(getObjectKey) && attachedObject == null)
@@ -172,7 +174,7 @@ public class FPS_CharacterController : RestartableObject
         }
     }
 
-    private void ShootPortal(Portal whatPortal)
+    private void ShootPortal(Portal whatPortal, int index)
     {
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
         RaycastHit rayCastHit;
@@ -183,7 +185,14 @@ public class FPS_CharacterController : RestartableObject
             bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
 
             if (!validPos)
+            {
                 whatPortal.gameObject.SetActive(false);
+                uiPlayer.UpdatePortals(index, false);
+            }
+            else
+            {
+                uiPlayer.UpdatePortals(index, true);
+            }
         }
     }
 
@@ -204,8 +213,17 @@ public class FPS_CharacterController : RestartableObject
     public void LoseHeal(int incomingDamage)
     {
         currentHp -= incomingDamage;
-       
+
+        currentHp = Mathf.Max(0, currentHp);
+
+        uiPlayer.UpdateHealth(currentHp);
+
+        if(currentHp <= 0)
+        {
+            gameManager.GameOver();
+        } 
     }
+
     private void AttachObject(Collider collider)
     {
         attachingObject = true;
@@ -256,5 +274,38 @@ public class FPS_CharacterController : RestartableObject
         objectAttached = null;
         attachingObjectCurrentTime = 0.0f;
     }
+
+    protected override void UpdateCheckPoint()
+    {
+        base.UpdateCheckPoint();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("CheckPoint"))
+        {
+            UpdateCheckPoint();
+        }
+    }
+
+
+
+    private float pushPower = 2.0F;
+
+    //DEBUG
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        if (body == null || body.isKinematic) { return; }
+       
+        if (hit.moveDirection.y < -0.3) { return; }
+    
+        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+        body.velocity = pushDir * pushPower;
+    }
+
+    
 }
 

@@ -18,4 +18,10 @@ public class RestartableObject : MonoBehaviour
         transform.position = m_InitialPosition;
         transform.rotation = m_InitialRotation;
     }
+
+    protected virtual void UpdateCheckPoint()
+    {
+        m_InitialPosition = transform.position;
+        m_InitialRotation = transform.rotation;
+    }
 }
