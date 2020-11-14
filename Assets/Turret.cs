@@ -45,6 +45,10 @@ public class Turret : MonoBehaviour
                     {
                         active = false;
                     }
+                    if (rayCastHit.collider.gameObject.CompareTag("Turret"))
+                    {
+                        Destroy(rayCastHit.collider.gameObject);
+                    }
                 }
 
             }
