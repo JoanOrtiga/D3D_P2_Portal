@@ -32,26 +32,29 @@ public class FPS_CharacterController : RestartableObject
     public KeyCode rightMovement = KeyCode.D;
     public KeyCode frontMovement = KeyCode.W;
     public KeyCode backMovement = KeyCode.S;
+    public KeyCode Grab = KeyCode.E;
 
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
 
-    public KeyCode getObjectKey = KeyCode.F;
 
-    private Transform attachObjectTransform;
 
+
+
+
+    public int maxHp;
+    private int currentHp;
+
+    [Header("Ataching Objects")]
+    public float throwAttachObjectForce = 5f;
+    [SerializeField]private Transform attachObjectTransform;
     public float maxDistanceToAttachObject = 25f;
     public LayerMask attachLayerMask;
-
     private float attachingObjectCurrentTime = 0.0f;
-    private float attachObjectTime = 0.0f;
+    [SerializeField] private float attachObjectTime = 0.0f;
     private bool attachingObject;
     private bool attachedObject;
     private GameObject objectAttached;
-
-    public float throwAttachObjectForce = 5f;
-    public int maxHp;
-    private int currentHp;
 
     [Header("PORTALS")]
     public Portal bluePortal;
@@ -138,15 +141,25 @@ public class FPS_CharacterController : RestartableObject
             ShootPortal(orangePortal, 1);
         }
 
-        if (Input.GetKeyDown(getObjectKey) && attachedObject == null)
-        {
-            GetObject();
-        }
+        //if (Input.GetKeyDown(getObjectKey) && attachedObject == null)
+        //{
+        //    GetObject();
+        //}
 
-        if (attachedObject != null)
+        //if (attachedObject != null)
+        //{
+        //    UpdateAttachedObject();
+        //}
+
+        if (Input.GetKeyDown(Grab) && objectAttached==null)
+        {
+            TryAttachObj();
+        }
+        if (objectAttached != null)
         {
             UpdateAttachedObject();
         }
+
     }
 
 
@@ -196,20 +209,20 @@ public class FPS_CharacterController : RestartableObject
         }
     }
 
-    private void GetObject()
-    {
-        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+    //private void GetObject()
+    //{
+    //    Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 
-        RaycastHit raycastHit;
+    //    RaycastHit raycastHit;
 
-        if (Physics.Raycast(ray, out raycastHit, maxDistanceToAttachObject, attachLayerMask))
-        {
-            if (raycastHit.collider.tag == "Companion")
-            {
-                AttachObject(raycastHit.collider);
-            }
-        }
-    }
+    //    if (Physics.Raycast(ray, out raycastHit, maxDistanceToAttachObject, attachLayerMask))
+    //    {
+    //        if (raycastHit.collider.tag == "Companion")
+    //        {
+    //            AttachObject(raycastHit.collider);
+    //        }
+    //    }
+    //}
     public void LoseHeal(int incomingDamage)
     {
         currentHp -= incomingDamage;
@@ -224,12 +237,33 @@ public class FPS_CharacterController : RestartableObject
         } 
     }
 
-    private void AttachObject(Collider collider)
+    private void TryAttachObj()
+    {
+        Ray l_Ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+        RaycastHit l_RaycastHit;
+        if(Physics.Raycast(l_Ray,out l_RaycastHit, maxDistanceToAttachObject, attachLayerMask))
+        {
+            if (l_RaycastHit.collider.tag == "CompanionCube")
+            {
+                AttachObject(l_RaycastHit.collider);
+            }
+            if (l_RaycastHit.collider.tag == "Turret")
+            {
+                AttachObject(l_RaycastHit.collider);
+            }
+        }
+        print(l_RaycastHit.collider.tag);
+
+
+    }
+    void AttachObject(Collider collider)
     {
         attachingObject = true;
-        attachedObject = collider.gameObject;
+        objectAttached = collider.gameObject;
         collider.enabled = false;
         collider.GetComponent<Rigidbody>().isKinematic = true;
+        attachingObjectCurrentTime = 0.0f;
+
     }
 
     private void UpdateAttachedObject()
@@ -248,11 +282,12 @@ public class FPS_CharacterController : RestartableObject
             {
                 attachingObject = false;
                 attachedObject = true;
+                objectAttached.transform.SetParent(attachObjectTransform);
             }
         }
         else if (attachedObject)
         {
-            if (Input.GetKeyDown(getObjectKey))
+            if (Input.GetKeyDown(Grab))
             {
                 ThrowAttachObject(0.0f);
             }
@@ -265,14 +300,14 @@ public class FPS_CharacterController : RestartableObject
 
     private void ThrowAttachObject(float force)
     {
-        objectAttached.GetComponent<Collider>().enabled = false;
+        objectAttached.GetComponent<Collider>().enabled = true;
+        objectAttached.transform.SetParent(null);
         Rigidbody rigidbody = objectAttached.GetComponent<Rigidbody>();
         rigidbody.isKinematic = false;
-        rigidbody.AddForce(attachObjectTransform.up * force);
+        rigidbody.AddForce(attachObjectTransform.forward * force);
 
         attachedObject = false;
         objectAttached = null;
-        attachingObjectCurrentTime = 0.0f;
     }
 
     protected override void UpdateCheckPoint()
