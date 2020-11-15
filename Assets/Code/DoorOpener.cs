@@ -5,8 +5,16 @@ using UnityEngine;
 public class DoorOpener : MonoBehaviour
 {
     public GameObject door;
-    
-   
+    private AudioSource sonido;
+    private void Start()
+    {
+        sonido = door.GetComponent<AudioSource>();
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        sonido.Play();
+
+    }
     private void OnTriggerStay(Collider other)
     {
        
@@ -17,6 +25,6 @@ public class DoorOpener : MonoBehaviour
     {
         
             door.GetComponent<Animator>().SetBool("open", false);
-        
+        sonido.Play();
     }
 }
