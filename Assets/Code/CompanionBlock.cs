@@ -6,6 +6,8 @@ public class CompanionBlock : MonoBehaviour
 {
     private Rigidbody rigidbody;
 
+    private bool canTeleport = true;
+
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
@@ -13,7 +15,7 @@ public class CompanionBlock : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Portal"))
+        if (other.CompareTag("Portal") && canTeleport)
         {
             Teleport(other.GetComponent<Portal>());
         }
@@ -44,5 +46,14 @@ public class CompanionBlock : MonoBehaviour
 
         rigidbody.isKinematic = false;
         rigidbody.velocity = portal.mirrorPortal.transform.TransformDirection(localVelocity);
+
+        StartCoroutine(Disable());
+    }
+
+    IEnumerator Disable()
+    {
+        canTeleport = false;
+        yield return new WaitForSeconds(0.15f);
+        canTeleport = true;
     }
 }

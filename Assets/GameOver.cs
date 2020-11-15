@@ -14,11 +14,8 @@ public class GameOver : MonoBehaviour
 
     void Update()
     {
-        print(gamemanager.paused);
-        if(gamemanager.paused == false)
+        if (gamemanager.paused == false)
         {
-            print(gamemanager.paused);
-
             gameObject.SetActive(false);
         }
     }
