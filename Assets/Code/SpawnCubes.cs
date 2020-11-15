@@ -9,7 +9,7 @@ public class SpawnCubes : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 spawner.SpawnCube();
             }
