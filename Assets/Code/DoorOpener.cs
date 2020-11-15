@@ -5,29 +5,18 @@ using UnityEngine;
 public class DoorOpener : MonoBehaviour
 {
     public GameObject door;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
+   
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("CompanionCube"))
-        {
+       
             door.GetComponent<Animator>().SetBool("open", true);
-        }
+        
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("CompanionCube"))
-        {
+        
             door.GetComponent<Animator>().SetBool("open", false);
-        }
+        
     }
 }

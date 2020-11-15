@@ -287,9 +287,9 @@ public class FPS_CharacterController : RestartableObject
     {
         attachingObject = true;
         objectAttached = collider.gameObject;
-        collider.enabled = false;
-        collider.GetComponent<Rigidbody>().isKinematic = true;
         attachingObjectCurrentTime = 0.0f;
+        collider.GetComponent<Rigidbody>().isKinematic = true;
+        collider.enabled = false;
 
     }
 
