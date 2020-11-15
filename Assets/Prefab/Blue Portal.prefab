@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 5640359108457438417}
   m_Layer: 8
   m_Name: Blue Portal
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -311,6 +311,7 @@ MonoBehaviour:
   maxDistance: 250
   refractionCubeHit: {fileID: 0}
   reflectionEmitter: {fileID: 0}
+  damage: 250
   mirrorPortal: {fileID: 0}
   mirrorPortalTransform: {fileID: 5640359108730152265}
   portalCamera: {fileID: 5640359108837581632}

@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class GameOver : MonoBehaviour
 {
-    GameManager gamemanager;
+    GameManager gameManager;
     // Update is called once per frame
 
     private void Start()
     {
-        gamemanager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
-        if (gamemanager.paused == false)
+        if (gameManager.paused == false)
         {
             gameObject.SetActive(false);
         }

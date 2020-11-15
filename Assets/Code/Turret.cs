@@ -14,13 +14,20 @@ public class Turret : MonoBehaviour
     public bool active;
     private int damage = 250;
     public bool broken;
+    public LayerMask laserLayerMask;
+
+    private Refractor refractor;
+
     private void Start()
     {
         broken = true;
         active = true;
         isGrabbed = false;
         laser = GetComponent<LineRenderer>();
+
+        fps = FindObjectOfType<FPS_CharacterController>();
     }
+
     private void Update()
     {
         if (broken)
@@ -28,42 +35,55 @@ public class Turret : MonoBehaviour
             Vector3 fwd = shootingPoint.transform.forward;
             Ray ray = new Ray(shootingPoint.transform.position, fwd);
             RaycastHit rayCastHit;
+
+            Refractor refractorCube = null;
+
             if (active)
             {
                 Debug.DrawRay(shootingPoint.transform.position, fwd * rayLength, Color.green);
                 Physics.Raycast(shootingPoint.transform.position, fwd);
                 laser.SetPosition(0, shootingPoint.transform.position);
-                laser.SetPosition(1, fwd * rayLength + shootingPoint.transform.position);
-                if (Physics.Raycast(ray, out rayCastHit, rayLength))
-                {
 
-                    if (rayCastHit.collider.gameObject.name.Equals("Capsule"))
+                laser.SetPosition(1, fwd * rayLength + shootingPoint.transform.position);
+
+                if (Physics.Raycast(ray, out rayCastHit, rayLength, laserLayerMask))
+                {
+                    if (rayCastHit.collider.CompareTag("Player"))
                     {
                         fps.LoseHeal(damage);
                     }
-                    if (rayCastHit.collider.gameObject.CompareTag("CompanionCube"))
+                    else if (rayCastHit.collider.CompareTag("CompanionCube"))
                     {
                         active = false;
                     }
-                    if (rayCastHit.collider.gameObject.CompareTag("Turret"))
+                    else if (rayCastHit.collider.CompareTag("Turret"))
                     {
                         Destroy(rayCastHit.collider.gameObject);
                     }
-                }
-
-            }
-            else
-            {
-                if (Physics.Raycast(ray, out rayCastHit, rayLength))
-                {
-                    laser.SetPosition(0, shootingPoint.transform.position);
-                    laser.SetPosition(1, rayCastHit.transform.position);
-                    if (rayCastHit.collider.gameObject.tag != "CompanionCube")
+                    else if (rayCastHit.collider.CompareTag("RefractionCube"))
                     {
-                        active = true;
+                        rayCastHit.collider.GetComponent<Refractor>().Reflection(gameObject);
+
+                        refractorCube = rayCastHit.collider.GetComponent<Refractor>();
+                    }
+                    else if (rayCastHit.collider.CompareTag("PortalRefractor"))
+                    {
+                        Portal portal = rayCastHit.collider.GetComponent<ReferenceToPortal>().portal;
+                        portal.Reflection(gameObject, rayCastHit.point, ray.direction);
                     }
 
+                    laser.SetPosition(1, rayCastHit.point);
                 }
+
+
+            }
+
+            if (refractorCube != refractor )
+            {
+                if(refractor != null)
+                    refractor.StopReflection();
+
+                refractor = refractorCube;
             }
         }
         else
@@ -74,11 +94,11 @@ public class Turret : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag.Equals("Turret"))
+        if (other.gameObject.CompareTag("Turret"))
         {
             broken = false;
         }
-        else if (other.gameObject.tag.Equals("CompanionCube"))
+        else if (other.gameObject.CompareTag("CompanionCube"))
         {
             broken = false;
         }

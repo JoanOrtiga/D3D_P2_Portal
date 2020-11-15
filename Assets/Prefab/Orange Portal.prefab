@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1500587000873062068}
   m_Layer: 8
   m_Name: Orange Portal
-  m_TagString: Untagged
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,6 +57,7 @@ MonoBehaviour:
   maxDistance: 250
   refractionCubeHit: {fileID: 0}
   reflectionEmitter: {fileID: 0}
+  damage: 250
   mirrorPortal: {fileID: 0}
   mirrorPortalTransform: {fileID: 1500587001735056566}
   portalCamera: {fileID: 1500586999952707732}
@@ -72,8 +73,8 @@ MonoBehaviour:
   - {fileID: 1500587000740823004}
   - {fileID: 1500587001161212160}
   - {fileID: 1500586999876230720}
-  minDistanceToValidPoint: 0.6
-  maxDistanceToValidPoint: 1.2
+  minDistanceToValidPoint: 0.3
+  maxDistanceToValidPoint: 5
   minDot: 0.9
   enteredPortal: 0
   leftPortal: 0
