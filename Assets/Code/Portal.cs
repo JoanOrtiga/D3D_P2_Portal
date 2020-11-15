@@ -60,6 +60,7 @@ public class Portal : Refractor
         float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
         portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
 
+
         if (enteredPortal && !leftPortal)
         {
             TeleportPlayer();

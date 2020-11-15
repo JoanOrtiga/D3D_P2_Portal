@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    //public GameOver gameOver;
+    public GameObject gameOver;
 
     public List<RestartableObject> restartableObjects;
+
+    public bool paused;
 
     private void Start()
     {
@@ -20,15 +22,26 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-
+        paused = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        gameOver.SetActive(true);
+      //  Time.timeScale = 0;
     }
 
     public void RestartLevel()
     {
+
+       // Time.timeScale = 1;
+        paused = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        
         for (int i = 0; i < restartableObjects.Count; i++)
         {
             restartableObjects[i].RestartObject();
         }
+
+ 
     }
 
 }

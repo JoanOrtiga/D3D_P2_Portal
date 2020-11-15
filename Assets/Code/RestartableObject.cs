@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RestartableObject : MonoBehaviour
 {
-    private Vector3 m_InitialPosition;
-    private Quaternion m_InitialRotation;
+    protected Vector3 m_InitialPosition;
+    protected Quaternion m_InitialRotation;
 
     protected virtual void Start()
     {

@@ -47,7 +47,7 @@ public class FPS_CharacterController : RestartableObject
 
     [Header("Ataching Objects")]
     public float throwAttachObjectForce = 5f;
-    [SerializeField]private Transform attachObjectTransform;
+    [SerializeField] private Transform attachObjectTransform;
     public float maxDistanceToAttachObject = 25f;
     public LayerMask attachLayerMask;
     private float attachingObjectCurrentTime = 0.0f;
@@ -63,8 +63,8 @@ public class FPS_CharacterController : RestartableObject
     public LayerMask shootLayerMask;
     public float shootDistance;
 
-    [SerializeField]private float maxScale;
-    [SerializeField]private float minScale;
+    [SerializeField] private float maxScale;
+    [SerializeField] private float minScale;
     public float maxPercentatge = 200;
     public float minPercentatge = 50;
     public float mouseWheelScaleFactor = 40;
@@ -97,11 +97,13 @@ public class FPS_CharacterController : RestartableObject
 
         maxScale = maxPercentatge * bluePortal.transform.localScale.x / 100f;
         minScale = minPercentatge * bluePortal.transform.localScale.x / 100f;
-
     }
 
-    private void Update()
+    protected void Update()
     {
+        if (gameManager.paused)
+            return;
+
         CameraUpdate();
 
         Vector3 l_Movement = Vector3.zero;
@@ -157,7 +159,7 @@ public class FPS_CharacterController : RestartableObject
 
 
 
-        if (Input.GetKeyDown(Grab) && objectAttached==null)
+        if (Input.GetKeyDown(Grab) && objectAttached == null)
         {
             TryAttachObj();
         }
@@ -221,7 +223,7 @@ public class FPS_CharacterController : RestartableObject
             whatPortal.gameObject.SetActive(true);
             bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
 
-            
+
 
 
             if (!validPos)
@@ -259,17 +261,17 @@ public class FPS_CharacterController : RestartableObject
 
         uiPlayer.UpdateHealth(currentHp);
 
-        if(currentHp <= 0)
+        if (currentHp <= 0)
         {
             gameManager.GameOver();
-        } 
+        }
     }
 
     private void TryAttachObj()
     {
         Ray l_Ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
         RaycastHit l_RaycastHit;
-        if(Physics.Raycast(l_Ray,out l_RaycastHit, maxDistanceToAttachObject, attachLayerMask))
+        if (Physics.Raycast(l_Ray, out l_RaycastHit, maxDistanceToAttachObject, attachLayerMask))
         {
             if (l_RaycastHit.collider.tag == "CompanionCube")
             {
@@ -280,9 +282,6 @@ public class FPS_CharacterController : RestartableObject
                 AttachObject(l_RaycastHit.collider);
             }
         }
-        print(l_RaycastHit.collider.tag);
-
-
     }
     void AttachObject(Collider collider)
     {
@@ -350,7 +349,13 @@ public class FPS_CharacterController : RestartableObject
             UpdateCheckPoint();
         }
     }
-
+    public override void RestartObject()
+    {
+        characterController.enabled = false;
+        transform.position = m_InitialPosition;
+        transform.rotation = m_InitialRotation;
+        characterController.enabled = true;
+    }
 
 
     private float pushPower = 2.0F;
@@ -361,9 +366,9 @@ public class FPS_CharacterController : RestartableObject
         Rigidbody body = hit.collider.attachedRigidbody;
 
         if (body == null || body.isKinematic) { return; }
-       
+
         if (hit.moveDirection.y < -0.3) { return; }
-    
+
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
 
         body.velocity = pushDir * pushPower;
