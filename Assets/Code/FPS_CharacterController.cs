@@ -63,6 +63,12 @@ public class FPS_CharacterController : RestartableObject
     public LayerMask shootLayerMask;
     public float shootDistance;
 
+    [SerializeField]private float maxScale;
+    [SerializeField]private float minScale;
+    public float maxPercentatge = 200;
+    public float minPercentatge = 50;
+    public float mouseWheelScaleFactor = 40;
+
 
     [Header("References")]
     public Camera mainCamera;
@@ -88,6 +94,10 @@ public class FPS_CharacterController : RestartableObject
 
         verticalSpeed = 0;
         currentMovementSpeed = movementSpeed;
+
+        maxScale = maxPercentatge * bluePortal.transform.localScale.x / 100f;
+        minScale = minPercentatge * bluePortal.transform.localScale.x / 100f;
+
     }
 
     private void Update()
@@ -132,24 +142,20 @@ public class FPS_CharacterController : RestartableObject
 
         GravityUpdate();
 
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !attachedObject && !attachingObject)
+        if (Input.GetKey(KeyCode.Mouse0) && !attachedObject && !attachingObject)
         {
             ShootPortal(bluePortal, 0);
+
+            PortalScaling(bluePortal);
         }
-        else if (Input.GetKeyDown(KeyCode.Mouse1) && !attachedObject && !attachingObject)
+        else if (Input.GetKey(KeyCode.Mouse1) && !attachedObject && !attachingObject)
         {
             ShootPortal(orangePortal, 1);
+
+            PortalScaling(orangePortal);
         }
 
-        //if (Input.GetKeyDown(getObjectKey) && attachedObject == null)
-        //{
-        //    GetObject();
-        //}
 
-        //if (attachedObject != null)
-        //{
-        //    UpdateAttachedObject();
-        //}
 
         if (Input.GetKeyDown(Grab) && objectAttached==null)
         {
@@ -159,7 +165,25 @@ public class FPS_CharacterController : RestartableObject
         {
             UpdateAttachedObject();
         }
+    }
 
+    private void PortalScaling(Portal portal)
+    {
+        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+        float scale = mouseWheel * Time.deltaTime * mouseWheelScaleFactor;
+
+        float finalScale = portal.transform.localScale.x;
+
+        if (mouseWheel > 0)
+        {
+            finalScale = Mathf.Min(portal.transform.localScale.x + scale, maxScale);
+        }
+        else if (mouseWheel < 0)
+        {
+            finalScale = Mathf.Max(portal.transform.localScale.x + scale, minScale);
+        }
+
+        portal.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
     }
 
 

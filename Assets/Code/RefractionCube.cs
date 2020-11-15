@@ -61,7 +61,7 @@ public class RefractionCube : MonoBehaviour
             else if (raycasthit.collider.CompareTag("PortalRefractor"))
             {
                 Portal portal = raycasthit.collider.GetComponent<ReferenceToPortal>().portal;
-                portal.Reflection(raycasthit.point, ray.direction);
+                portal.Reflection(gameObject, raycasthit.point, ray.direction);
             }
 
             laser.SetPosition(1, new Vector3(0.0f, 0.0f, distance));

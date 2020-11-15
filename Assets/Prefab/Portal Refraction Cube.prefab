@@ -250,7 +250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 892722014618133677}
   - component: {fileID: 4196691761375582103}
-  - component: {fileID: 7793092880365261816}
+  - component: {fileID: 2093330950}
   m_Layer: 0
   m_Name: Portal Refraction Cube
   m_TagString: RefractionCube
@@ -293,7 +293,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.84195256, y: 0.8484535, z: 0.84399605}
   m_Center: {x: -0.0077077746, y: 0, z: -0.0022287369}
---- !u!114 &7793092880365261816
+--- !u!114 &2093330950
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,7 +302,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 892722014618105997}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dfa02ad9971c90438f68157e98b56a8, type: 3}
+  m_Script: {fileID: 11500000, guid: a1bdf8a7a89fefd47b06f6cf08bb7d1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   laser: {fileID: 1095424989}
@@ -310,6 +310,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 567
   maxDistance: 250
+  refractionCubeHit: {fileID: 0}
   reflectionEmitter: {fileID: 0}
 --- !u!1 &892722014618105999
 GameObject:

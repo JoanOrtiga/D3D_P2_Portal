@@ -20,7 +20,6 @@ public class Portal : Refractor
     public float maxDistanceToValidPoint = 1.2f;
     public float minDot = 0.9f;
 
-
     //  [Header("TELEPORT")]
     [HideInInspector] public bool enteredPortal = false;
     [HideInInspector] public bool leftPortal = false;
@@ -60,6 +59,11 @@ public class Portal : Refractor
 
         float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
         portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
+
+        if (enteredPortal && !leftPortal)
+        {
+            TeleportPlayer();
+        }
     }
 
 
@@ -143,8 +147,16 @@ public class Portal : Refractor
         enteredPortal = false;
     }
 
-    public void Reflection(Vector3 position, Vector3 direction)
+    public bool Reflection(GameObject _reflectorEmitter, Vector3 position, Vector3 direction)
     {
+        if (reflectionEmitter != null && _reflectorEmitter != reflectionEmitter)
+        {
+            return false;
+        }
+
+        reflectionEmitter = _reflectorEmitter;
+
+
         Vector2 localPosition = mirrorPortalTransform.InverseTransformPoint(position);
         mirrorPortal.laser.transform.localPosition = localPosition;
 
@@ -154,5 +166,19 @@ public class Portal : Refractor
         mirrorPortal.laser.gameObject.SetActive(true);
 
         base.UpdateLaserDistance();
+
+        return true;
+    }
+
+    public override void StopReflection()
+    {
+        mirrorPortal.laser.gameObject.SetActive(false);
+
+        if (refractionCubeHit != null)
+        {
+            refractionCubeHit.StopReflection();
+        }
+
+        refractionCubeHit = null;
     }
 }

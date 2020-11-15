@@ -9,7 +9,7 @@ public class Refractor : MonoBehaviour
     public LayerMask laserLayerMask;
     public float maxDistance = 250.0f;
 
-    Refractor refractionCubeHit;
+    public Refractor refractionCubeHit;
     public GameObject reflectionEmitter;
 
     protected virtual void Start()
@@ -40,12 +40,12 @@ public class Refractor : MonoBehaviour
     protected void UpdateLaserDistance()
     {
         Refractor refractionCube = refractionCubeHit;
-        refractionCubeHit = null;
-
-
+       
         RaycastHit raycasthit;
         Ray ray = new Ray(laser.transform.position, laser.transform.forward);
         float distance = maxDistance;
+
+        //refractionCubeHit = null;
 
         if (Physics.Raycast(ray, out raycasthit, maxDistance, laserLayerMask))
         {
@@ -56,25 +56,42 @@ public class Refractor : MonoBehaviour
                 refractionCubeHit = raycasthit.collider.GetComponent<Refractor>();
 
                 if (refractionCubeHit.Reflection(gameObject))
-                    refractionCubeHit = null;
+                {
+                    //      refractionCubeHit = null;
+                }
+
             }
             else if (raycasthit.collider.CompareTag("PortalRefractor"))
             {
                 Portal portal = raycasthit.collider.GetComponent<ReferenceToPortal>().portal;
-                portal.Reflection(raycasthit.point, ray.direction);
+                portal.Reflection(gameObject, raycasthit.point, ray.direction);
+
+                refractionCubeHit = portal;
+            }
+            else if (refractionCube != null)
+            {
+                refractionCubeHit = null;
+                refractionCube.StopReflection();
             }
 
             laser.SetPosition(1, new Vector3(0.0f, 0.0f, distance));
-            if (refractionCube != refractionCubeHit)
+            
+         /*   if (refractionCube != refractionCubeHit)
             {
                 refractionCube.StopReflection();
-            }
+            }*/
+        }
+        else if(refractionCube != null)
+        {
+            print("XD");
+            refractionCube.StopReflection();
         }
     }
 
-    public void StopReflection()
+    public virtual void StopReflection()
     {
-        laser.gameObject.SetActive(false);
+         laser.gameObject.SetActive(false);
+
         if (refractionCubeHit != null)
         {
             refractionCubeHit.StopReflection();

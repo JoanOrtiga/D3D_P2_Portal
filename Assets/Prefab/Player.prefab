@@ -318,8 +318,12 @@ MonoBehaviour:
   orangePortal: {fileID: 0}
   shootLayerMask:
     serializedVersion: 2
-    m_Bits: 55
-  shootDistance: 10
+    m_Bits: 51
+  shootDistance: 200
+  maxScale: 0
+  minScale: 0
+  maxPercentatge: 200
+  minPercentatge: 50
   mainCamera: {fileID: 0}
   uiPlayer: {fileID: 0}
   gameManager: {fileID: 0}
