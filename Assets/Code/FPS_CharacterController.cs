@@ -276,7 +276,11 @@ public class FPS_CharacterController : RestartableObject
             {
                 AttachObject(l_RaycastHit.collider);
             }
-            if (l_RaycastHit.collider.tag == "Turret")
+            else if (l_RaycastHit.collider.tag == "Turret")
+            {
+                AttachObject(l_RaycastHit.collider);
+            }
+            else if (l_RaycastHit.collider.CompareTag("RefractionCube"))
             {
                 AttachObject(l_RaycastHit.collider);
             }
@@ -361,9 +365,11 @@ public class FPS_CharacterController : RestartableObject
     }
 
 
+    //DEBUG TO PUSH ELEMENTS
+    /*
     private float pushPower = 2.0F;
 
-    //DEBUG
+   
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
@@ -377,6 +383,6 @@ public class FPS_CharacterController : RestartableObject
         body.velocity = pushDir * pushPower;
     }
 
-    
+    */
 }
 

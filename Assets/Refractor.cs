@@ -12,6 +12,8 @@ public class Refractor : MonoBehaviour
     public Refractor refractionCubeHit;
     public GameObject reflectionEmitter;
 
+    public int damage = 250;
+
     protected virtual void Start()
     {
         laser.gameObject.SetActive(false);
@@ -54,12 +56,7 @@ public class Refractor : MonoBehaviour
             if (raycasthit.collider.CompareTag("RefractionCube"))
             {
                 refractionCubeHit = raycasthit.collider.GetComponent<Refractor>();
-
-                if (refractionCubeHit.Reflection(gameObject))
-                {
-                    //      refractionCubeHit = null;
-                }
-
+                refractionCubeHit.Reflection(gameObject);
             }
             else if (raycasthit.collider.CompareTag("PortalRefractor"))
             {
@@ -67,6 +64,14 @@ public class Refractor : MonoBehaviour
                 portal.Reflection(gameObject, raycasthit.point, ray.direction);
 
                 refractionCubeHit = portal;
+            }
+            else if (raycasthit.collider.CompareTag("Player"))
+            {
+                raycasthit.collider.GetComponent<FPS_CharacterController>().LoseHeal(damage);
+            }
+            else if (raycasthit.collider.CompareTag("Turret"))
+            {
+                Destroy(raycasthit.collider.gameObject);
             }
             else if (refractionCube != null)
             {
