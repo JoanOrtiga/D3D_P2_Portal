@@ -391,8 +391,9 @@ public class FPS_CharacterController : RestartableObject
         }
         if (other.CompareTag("NextLevel"))
         {
-            gameManager.NextLevel();
+            gameManager.LoadNext();
         }
+        
     }
     public override void RestartObject()
     {

@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public GameObject gameOver;
-    public GameObject nextLevel;
     public List<RestartableObject> restartableObjects;
 
     public bool paused;
@@ -36,10 +35,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("SecondScene");
 
     }
-    public void NextLevel()
-    {
-        nextLevel.SetActive(true);
-    }
+   
     public void RestartLevel()
     {
 
