@@ -39,6 +39,9 @@ public class FPS_CharacterController : RestartableObject
     public KeyCode sprintKey = KeyCode.LeftShift;
 
 
+    [Header("Sonidos")]
+    private AudioSource playerAudio;
+    public AudioSource gun;
 
 
 
@@ -87,6 +90,8 @@ public class FPS_CharacterController : RestartableObject
 
     protected override void Start()
     {
+        playerAudio = this.gameObject.GetComponent<AudioSource>();
+
         currentHp = maxHp;
         base.Start();
 
@@ -114,14 +119,39 @@ public class FPS_CharacterController : RestartableObject
         Vector3 l_Forward = transform.forward;
 
         if (Input.GetKey(rightMovement))
+        {
             l_Movement += l_Right;
-        if (Input.GetKey(leftMovement))
-            l_Movement += -l_Right;
-        if (Input.GetKey(frontMovement))
-            l_Movement += l_Forward;
-        if (Input.GetKey(backMovement))
-            l_Movement += -l_Forward;
+            if (playerAudio.isPlaying != true)
+            {
+                playerAudio.Play();
+            }
 
+        }
+        if (Input.GetKey(leftMovement))
+        {
+            l_Movement += -l_Right;
+            if (playerAudio.isPlaying != true)
+            {
+                playerAudio.Play();
+            }
+
+        }
+        if (Input.GetKey(frontMovement))
+        {
+            l_Movement += l_Forward;
+            if (playerAudio.isPlaying != true)
+            {
+                playerAudio.Play();
+            }
+        }
+        if (Input.GetKey(backMovement))
+        {
+            l_Movement += -l_Forward;
+            if (playerAudio.isPlaying != true)
+            {
+                playerAudio.Play();
+            }
+        }
         if (Input.GetKeyDown(jumpKey) && onGround)
         {
             verticalSpeed = jumpSpeed;
