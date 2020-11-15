@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Portal : MonoBehaviour
+public class Portal : Refractor
 {
     [Header("PORTAL LOOKING")]
     public Portal mirrorPortal;
@@ -12,20 +12,26 @@ public class Portal : MonoBehaviour
 
     public float cameraOffset = 0.1f;
 
+    public GameObject portalLooking;
+
     [Header("VALID POSITIONS")]
     public List<Transform> validPoints;
     public float minDistanceToValidPoint = 0.65f;
     public float maxDistanceToValidPoint = 1.2f;
     public float minDot = 0.9f;
 
+
+    //  [Header("TELEPORT")]
     [HideInInspector] public bool enteredPortal = false;
     [HideInInspector] public bool leftPortal = false;
 
     private GameObject objectTeleported;
     private bool teleportObjectAvaiable = true;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<FPS_CharacterController>();
@@ -34,8 +40,19 @@ public class Portal : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
+        if (!mirrorPortal.gameObject.activeSelf && portalLooking.activeSelf)
+        {
+            portalLooking.SetActive(false);
+        }
+        else if (mirrorPortal.gameObject.activeSelf && !portalLooking.activeSelf)
+        {
+            portalLooking.SetActive(true);
+        }
+
         Vector3 localPosition = mirrorPortal.mirrorPortalTransform.InverseTransformPoint(player.mainCamera.transform.position);
         portalCamera.transform.position = transform.TransformPoint(localPosition);
         Vector3 localDirection = mirrorPortal.mirrorPortalTransform.InverseTransformDirection(player.mainCamera.transform.forward);
@@ -43,11 +60,6 @@ public class Portal : MonoBehaviour
 
         float distanceToPortal = Vector3.Distance(portalCamera.transform.position, transform.position);
         portalCamera.nearClipPlane = distanceToPortal + cameraOffset;
-
-        if (enteredPortal && !leftPortal)
-        {
-            TeleportPlayer();
-        }
     }
 
 
@@ -120,10 +132,8 @@ public class Portal : MonoBehaviour
 
         player.characterController.enabled = false;
         Vector3 localPosition = transform.InverseTransformPoint(transform.position);       //Offset to adjust player height;
-        player.transform.position = mirrorPortal.transform.TransformPoint(localPosition) - new Vector3(0, 1f, 0); 
+        player.transform.position = mirrorPortal.transform.TransformPoint(localPosition) - new Vector3(0, 1f, 0);
         player.characterController.enabled = true;
-
-        
 
         Vector3 localDirection = transform.InverseTransformDirection(-player.transform.forward);
         player.transform.forward = mirrorPortal.transform.TransformDirection(localDirection);
@@ -131,7 +141,18 @@ public class Portal : MonoBehaviour
         player.pitch = pitch;
 
         enteredPortal = false;
+    }
 
-       // Debug.Break();
+    public void Reflection(Vector3 position, Vector3 direction)
+    {
+        Vector2 localPosition = mirrorPortalTransform.InverseTransformPoint(position);
+        mirrorPortal.laser.transform.localPosition = localPosition;
+
+        Vector3 localDirection = mirrorPortalTransform.InverseTransformDirection(direction);
+        mirrorPortal.laser.transform.localRotation = Quaternion.LookRotation(localDirection);
+
+        mirrorPortal.laser.gameObject.SetActive(true);
+
+        base.UpdateLaserDistance();
     }
 }

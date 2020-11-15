@@ -197,6 +197,9 @@ public class FPS_CharacterController : RestartableObject
             whatPortal.gameObject.SetActive(true);
             bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
 
+            
+
+
             if (!validPos)
             {
                 whatPortal.gameObject.SetActive(false);
@@ -207,6 +210,7 @@ public class FPS_CharacterController : RestartableObject
                 uiPlayer.UpdatePortals(index, true);
             }
         }
+
     }
 
     //private void GetObject()

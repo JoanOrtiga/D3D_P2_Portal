@@ -8,6 +8,9 @@ TagManager:
   - Cube
   - CompanionCube
   - Turret
+  - CheckPoint
+  - RefractionCube
+  - PortalRefractor
   layers:
   - Default
   - TransparentFX
