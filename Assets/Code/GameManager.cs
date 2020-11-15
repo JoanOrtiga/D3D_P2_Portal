@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         restartableObjects = new List<RestartableObject>();
-
+         
         foreach (RestartableObject item in FindObjectsOfType<RestartableObject>())
         {
             restartableObjects.Add(item);
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadNext()
     {
-        SceneManager.LoadScene("Level2");
+        SceneManager.LoadScene("SecondScene");
 
     }
     public void NextLevel()
