@@ -91,7 +91,7 @@ public class FPS_CharacterController : RestartableObject
     protected override void Start()
     {
         playerAudio = this.gameObject.GetComponent<AudioSource>();
-        gun = this.GetComponentsInChildren<AudioSource>()[1];
+
         currentHp = maxHp;
         base.Start();
 
@@ -121,7 +121,7 @@ public class FPS_CharacterController : RestartableObject
         if (Input.GetKey(rightMovement))
         {
             l_Movement += l_Right;
-            if (playerAudio.isPlaying != true && onGround)
+            if (playerAudio.isPlaying != true)
             {
                 playerAudio.Play();
             }
@@ -130,7 +130,7 @@ public class FPS_CharacterController : RestartableObject
         if (Input.GetKey(leftMovement))
         {
             l_Movement += -l_Right;
-            if (playerAudio.isPlaying != true && onGround)
+            if (playerAudio.isPlaying != true)
             {
                 playerAudio.Play();
             }
@@ -139,7 +139,7 @@ public class FPS_CharacterController : RestartableObject
         if (Input.GetKey(frontMovement))
         {
             l_Movement += l_Forward;
-            if (playerAudio.isPlaying != true && onGround)
+            if (playerAudio.isPlaying != true)
             {
                 playerAudio.Play();
             }
@@ -147,7 +147,7 @@ public class FPS_CharacterController : RestartableObject
         if (Input.GetKey(backMovement))
         {
             l_Movement += -l_Forward;
-            if (playerAudio.isPlaying != true && onGround)
+            if (playerAudio.isPlaying != true)
             {
                 playerAudio.Play();
             }
@@ -176,16 +176,6 @@ public class FPS_CharacterController : RestartableObject
         collisionFlags = characterController.Move(l_Movement);
 
         GravityUpdate();
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            gun.Play();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            gun.Play();
-        }
         if (objectAttached == null)
         {
             if (Input.GetKey(KeyCode.Mouse0) == false)
@@ -199,6 +189,7 @@ public class FPS_CharacterController : RestartableObject
         {
            
             ShootPortal(bluePortal, 0);
+
             PortalScaling(bluePortal);
         }
         else if (Input.GetKey(KeyCode.Mouse1) && objectDropped)
@@ -271,7 +262,6 @@ public class FPS_CharacterController : RestartableObject
 
         if (Physics.Raycast(ray, out rayCastHit, shootDistance, shootLayerMask.value))
         {
-
             whatPortal.gameObject.SetActive(true);
             bool validPos = whatPortal.IsValidPosition(rayCastHit.point, rayCastHit.normal);
 
@@ -286,8 +276,6 @@ public class FPS_CharacterController : RestartableObject
             else
             {
                 uiPlayer.UpdatePortals(index, true);
-                
-
             }
         }
 
