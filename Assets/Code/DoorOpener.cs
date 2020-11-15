@@ -7,7 +7,7 @@ public class DoorOpener : MonoBehaviour
     public GameObject door;
     
    
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
        
             door.GetComponent<Animator>().SetBool("open", true);

@@ -11,6 +11,8 @@ TagManager:
   - CheckPoint
   - RefractionCube
   - PortalRefractor
+  - Portal
+  - NextLevel
   layers:
   - Default
   - TransparentFX

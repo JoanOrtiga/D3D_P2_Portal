@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+
 
 public class GameManager : MonoBehaviour
 {
     public GameObject gameOver;
-
+    public GameObject nextLevel;
     public List<RestartableObject> restartableObjects;
 
     public bool paused;
@@ -28,6 +31,15 @@ public class GameManager : MonoBehaviour
       //  Time.timeScale = 0;
     }
 
+    public void LoadNext()
+    {
+        SceneManager.LoadScene("Level2");
+
+    }
+    public void NextLevel()
+    {
+        nextLevel.SetActive(true);
+    }
     public void RestartLevel()
     {
 

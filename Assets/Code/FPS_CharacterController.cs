@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FPS_CharacterController : RestartableObject
 {
@@ -56,6 +57,8 @@ public class FPS_CharacterController : RestartableObject
     private bool attachedObject;
     private GameObject objectAttached;
 
+    private bool objectDropped=true;
+
     [Header("PORTALS")]
     public Portal bluePortal;
     public Portal orangePortal;
@@ -87,7 +90,7 @@ public class FPS_CharacterController : RestartableObject
         currentHp = maxHp;
         base.Start();
 
-        Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
 
         yaw = transform.rotation.eulerAngles.y;
         pitch = pitchController.localRotation.eulerAngles.x;
@@ -143,21 +146,28 @@ public class FPS_CharacterController : RestartableObject
         collisionFlags = characterController.Move(l_Movement);
 
         GravityUpdate();
-
-        if (Input.GetKey(KeyCode.Mouse0) && !attachedObject && !attachingObject)
+        if (objectAttached == null)
         {
+            if (Input.GetKey(KeyCode.Mouse0) == false)
+            {
+                objectDropped = true;
+            }
+
+
+        }
+        if (Input.GetKey(KeyCode.Mouse0) && objectDropped)
+        {
+           
             ShootPortal(bluePortal, 0);
 
             PortalScaling(bluePortal);
         }
-        else if (Input.GetKey(KeyCode.Mouse1) && !attachedObject && !attachingObject)
+        else if (Input.GetKey(KeyCode.Mouse1) && objectDropped)
         {
             ShootPortal(orangePortal, 1);
 
             PortalScaling(orangePortal);
         }
-
-
 
         if (Input.GetKeyDown(Grab) && objectAttached == null)
         {
@@ -167,6 +177,8 @@ public class FPS_CharacterController : RestartableObject
         {
             UpdateAttachedObject();
         }
+
+
     }
 
     private void PortalScaling(Portal portal)
@@ -239,20 +251,7 @@ public class FPS_CharacterController : RestartableObject
 
     }
 
-    //private void GetObject()
-    //{
-    //    Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
-
-    //    RaycastHit raycastHit;
-
-    //    if (Physics.Raycast(ray, out raycastHit, maxDistanceToAttachObject, attachLayerMask))
-    //    {
-    //        if (raycastHit.collider.tag == "Companion")
-    //        {
-    //            AttachObject(raycastHit.collider);
-    //        }
-    //    }
-    //}
+   
     public void LoseHeal(int incomingDamage)
     {
         currentHp -= incomingDamage;
@@ -290,7 +289,7 @@ public class FPS_CharacterController : RestartableObject
         attachingObjectCurrentTime = 0.0f;
         collider.GetComponent<Rigidbody>().isKinematic = true;
         collider.enabled = false;
-
+        objectDropped = false;
     }
 
     private void UpdateAttachedObject()
@@ -347,6 +346,10 @@ public class FPS_CharacterController : RestartableObject
         if (other.CompareTag("CheckPoint"))
         {
             UpdateCheckPoint();
+        }
+        if (other.CompareTag("NextLevel"))
+        {
+            gameManager.NextLevel();
         }
     }
     public override void RestartObject()
